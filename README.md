@@ -1,114 +1,158 @@
-# Echoly — Live YouTube Translation
+# YouNote — Dịch trực tiếp YouTube
 
-> Hear any YouTube video in your language. Live AI dubbing, runs on your own [Kyma](https://kymaapi.com) key.
+> Nghe mọi video YouTube bằng tiếng Việt (hoặc 12 ngôn ngữ khác). Lồng tiếng AI trực tiếp, dùng [Kyma](https://kymaapi.com) key của riêng bạn.
 
 <p align="center">
-  <img src="store-assets/screenshots/01-popup.png" alt="Echoly popup" width="380">
+  <img src="store-assets/screenshots/01-popup.png" alt="YouNote popup" width="400">
 </p>
 
-Chrome MV3 extension that overlays a live AI voice-over onto any YouTube video. Two tiers:
+Chrome MV3 extension chèn lớp lồng tiếng AI trực tiếp lên video YouTube. Hai chế độ:
 
-- **Realtime** — WebRTC P2P, sub-second lag, 9 OpenAI voices or auto-clone of the speaker. ~$0.46 / 10 min.
-- **Standard** — chunked pipeline (Whisper → Gemini → MiniMax), ~5s lag, 5 curated multilingual voices. ~$0.25 / 10 min.
+- **Tiêu chuẩn** *(mặc định)* — pipeline chia chunk (Whisper → Gemini → MiniMax), trễ ~5s, 5 giọng đa ngôn ngữ. ~$0.25 / 10 phút.
+- **Thời gian thực** — WebRTC P2P, trễ <1 giây, 9 giọng OpenAI hoặc auto-clone giọng người nói. ~$0.46 / 10 phút.
 
-13 target languages. No account, no telemetry, no Echoly-operated server.
+13 ngôn ngữ đích. Không tài khoản, không telemetry, không server YouNote.
 
-## Install
+## Cài đặt
 
-### From Chrome Web Store *(coming soon)*
+### Từ Chrome Web Store *(sắp ra mắt)*
 
-The submission is in review at the Chrome Web Store. Once approved, install with one click.
+Đang trong quá trình duyệt tại Chrome Web Store. Sau khi duyệt, cài 1 click.
 
-### From source (developer mode)
+### Từ source (developer mode)
 
-1. Clone or download this repo
-2. Open `chrome://extensions`
-3. Toggle **Developer mode** (top-right)
-4. Click **Load unpacked**
-5. Select the cloned folder
-6. Pin Echoly to the toolbar
+1. Clone hoặc download repo
+2. Mở `chrome://extensions`
+3. Bật **Developer mode** (góc phải trên)
+4. Bấm **Load unpacked**
+5. Chọn thư mục đã clone
+6. Pin YouNote vào toolbar
 
-Update with `git pull` and click the reload icon on the extension card.
+Cập nhật bằng `git pull` rồi bấm icon reload trên thẻ extension.
 
-## Use
+## Sử dụng
 
-1. Open any YouTube video
-2. Click the Echoly icon
-3. Paste your Kyma API key from [kymaapi.com](https://kymaapi.com)
-4. Pick a tier, target language, and voice
-5. Click **Start** — the dub plays and the on-page panel renders the live translation
-6. Drag the panel by its toolbar; resize from any edge or corner
+1. Mở 1 video YouTube bất kỳ
+2. Bấm icon YouNote
+3. Dán Kyma API key từ [kymaapi.com](https://kymaapi.com)
+4. Chọn chế độ, ngôn ngữ đích, và giọng
+5. Bấm **Bắt đầu** — phần dịch sẽ phát + panel trên trang hiện bản dịch trực tiếp
+6. Kéo panel bằng toolbar; resize từ cạnh hoặc góc bất kỳ
 
-You can change voice or language mid-session — Realtime hot-swaps in <1s, Standard picks up the change on the next 5s chunk.
+Có thể đổi giọng/ngôn ngữ giữa session — Thời gian thực hot-swap <1s, Tiêu chuẩn áp dụng từ chunk 5s tiếp theo.
 
-## How it works
+## Cách hoạt động
 
 ```
-popup ◄──BACKGROUND_STATE_UPDATE──── background ◄──CONTENT_STATE──── content (YT page)
+popup ◄──BACKGROUND_STATE_UPDATE──── background ◄──CONTENT_STATE──── content (trang YT)
        ───START / UPDATE_SETTINGS───►          ───CONTENT_START───►
 ```
 
-- **popup.html / popup.js** — passive renderer, no own state.
-- **background.js** — single source of truth for `state`. Injects content script via `chrome.scripting.executeScript` if not yet present.
-- **content.js** — captures the YT video element audio, builds the in-page overlay panel, and runs the active pipeline:
-  - **Realtime tier**: mints a Kyma ephemeral token, opens P2P WebRTC with OpenAI Realtime.
-  - **Standard tier**: chunks the audio into 5s windows via `MediaRecorder`, re-encodes to WAV client-side, then runs Whisper transcription → Gemini translation → MiniMax TTS per chunk through the Kyma gateway. Web Audio scheduling queues the resulting mp3 chunks back-to-back.
+- **popup.html / popup.js** — passive renderer, không giữ state riêng.
+- **background.js** — single source of truth cho `state`. Inject content script qua `chrome.scripting.executeScript` nếu chưa có.
+- **content.js** — capture audio video YT, dựng overlay panel trên trang, chạy pipeline:
+  - **Tiêu chuẩn**: chia audio thành cửa sổ 5s qua `MediaRecorder`, re-encode WAV client-side, rồi chạy Whisper → Gemini → MiniMax TTS qua Kyma gateway. Web Audio scheduling xếp chunk mp3 phát liên tiếp.
+  - **Thời gian thực**: mint Kyma ephemeral token, mở P2P WebRTC với OpenAI Realtime.
 
-Token-guarded async pattern (`pageToken` captured in closure, checked before any state mutation) keeps stale callbacks from corrupting newer sessions when the user changes settings or stops mid-pipeline. An `AbortController` per Standard session cancels in-flight fetches the moment Stop is clicked, so credits aren't burned on orphaned chunks.
+Token-guarded async (`pageToken` capture trong closure, check trước khi mutate state) tránh stale callback corrupt session mới khi user đổi setting hoặc Stop giữa chừng. `AbortController` cho mỗi Standard session hủy fetch in-flight ngay khi bấm Stop, không đốt credit cho chunk orphan.
 
-## Features
+## Việt hóa & đa ngôn ngữ
 
-- One-key onboarding (paste Kyma key → Start)
-- 13 target languages: English, Vietnamese, Japanese, Korean, Chinese, French, Spanish, German, Portuguese, Hindi, Indonesian, Italian, Russian
-- Drag/resize on-page overlay panel with persisted layout
-- Translation history (last 16 turns, scrollable)
-- Source caption rendering (toggle in popup)
-- Independent volume sliders for original audio and dub
-- Voice amplification up to 2× via Web Audio GainNode
-- Instant pause/play (no reconnect)
-- 60-min hard auto-stop with a one-shot 5-min warning
-- Tab close cleanup via `keepalive` POST so Kyma sees the session end
+UI dùng `chrome.i18n` chuẩn với `_locales/vi/` (mặc định) + `_locales/en/`. Chrome tự pick locale theo cài đặt ngôn ngữ trình duyệt.
 
-## Standard tier voices
+## Tính năng
 
-Curated from MiniMax's 333-voice catalog. All multilingual — each voice speaks any of the 13 target languages.
+- Onboarding 1 phím (dán Kyma key → Bắt đầu)
+- 13 ngôn ngữ đích: Anh, Việt, Nhật, Hàn, Trung, Pháp, Tây Ban Nha, Đức, Bồ Đào Nha, Hindi, Indonesia, Ý, Nga
+- Panel overlay drag/resize có lưu layout
+- Lịch sử dịch (16 lượt gần nhất, scroll được)
+- Phụ đề gốc (toggle trong popup)
+- Slider âm lượng riêng cho audio gốc và lồng tiếng
+- Khuếch đại giọng tới 2× qua Web Audio GainNode
+- Pause/play tức thì (không reconnect)
+- Auto-stop cứng 60 phút + cảnh báo trước 5 phút
+- Cleanup khi đóng tab qua `keepalive` POST để Kyma thấy session kết thúc
 
-- **Magnetic Man** — US, male
-- **Captivating Female** — US, female
-- **Deep Voice Man** — US, male
-- **Confident Woman** — US, female
-- **News Anchor** — female
+## Giọng cho chế độ Tiêu chuẩn
 
-## Privacy
+Curated từ catalog 333 giọng của MiniMax. Tất cả đa ngôn ngữ — mỗi giọng nói được cả 13 ngôn ngữ đích.
 
-Echoly does not collect, store, or sell any personal data. Your Kyma API key stays on your own device. Audio is sent directly to AI providers (Kyma, and OpenAI for Realtime tier) for the sole purpose of producing the translation. There is no Echoly-operated server.
+- **Giọng Nam Cuốn Hút** — US, nam
+- **Giọng Nữ Truyền Cảm** — US, nữ
+- **Giọng Nam Trầm** — US, nam
+- **Giọng Nữ Tự Tin** — US, nữ
+- **Phát Thanh Viên** — nữ
 
-Full policy: [`store-assets/privacy-policy.html`](store-assets/privacy-policy.html)
+## Bảo mật
 
-## Build a release zip
+YouNote không thu thập, lưu, hoặc bán dữ liệu cá nhân. Kyma API key của bạn ở yên trên máy bạn. Audio gửi trực tiếp tới các nhà cung cấp AI (Kyma, và OpenAI cho chế độ Thời gian thực) chỉ để dịch. Không có server YouNote.
+
+Chính sách đầy đủ: [`store-assets/privacy-policy.html`](store-assets/privacy-policy.html)
+
+## Build cho distribution (obfuscated)
+
+Source folder dùng cho **dev** (load unpacked đọc thẳng JS rõ ràng để debug). Khi share/release cần đóng gói code obfuscated:
 
 ```bash
-./pack.sh
-# → ~/echoly-vX.Y.Z.zip
+npm install        # lần đầu — kéo terser + javascript-obfuscator + archiver (~30 MB)
+npm run build      # tạo dist/ với JS obfuscated, asset copy as-is
+npm run pack       # build + zip → ~/younote-vX.Y.Z.zip
 ```
 
-Reads the version from `manifest.json`, excludes `.git`, `.DS_Store`, `node_modules`. Drop the resulting zip into the Chrome Web Store Developer Console for an update, or share it for manual sideload.
+Hoặc dùng wrapper cũ:
+```bash
+./pack.sh          # tự npm install nếu cần, rồi npm run pack
+```
+
+### Folder để load unpacked
+
+| Mục đích | Folder | Code dạng |
+|---|---|---|
+| Dev / debug | `d:\SourceCode\Echoly\` (root) | Plain JS, có comment |
+| Distribute / share | `d:\SourceCode\Echoly\dist\` | Obfuscated (terser + string-array + mangle) |
+
+Cả 2 đều load qua `chrome://extensions/` → Developer mode → Load unpacked. End user sẽ load `dist/` (giải nén từ zip).
+
+### Pipeline kỹ thuật
+
+[build.js](build.js) áp dụng:
+- **Terser**: minify, dead-code elim, strip comment
+- **javascript-obfuscator** (preset light): identifier mangle (mangled-shuffled), string-array base64-encoded với 2 wrapper layer, `splitStrings`, `numbersToExpressions`
+- **Tắt** control-flow flattening + dead-code injection (giữ performance Realtime tier)
+- **Tắt** selfDefending + debugProtection (an toàn extension context, Web Store reviewer-friendly)
+- **Giữ** `transformObjectKeys: false` + `renameGlobals: false` để `chrome.*` API string-key reflection không vỡ
 
 ## Roadmap
 
-- Per-tab session log (live cost meter)
-- Language warming on hover (sub-200ms switches in Realtime)
-- Dictionary lookup on highlighted source caption text
-- Firefox port (MV3 manifest portability TBD)
+- Session log per-tab (đo cost trực tiếp)
+- Warm ngôn ngữ khi hover (chuyển <200ms cho Realtime)
+- Tra từ điển trên text phụ đề gốc highlight
+- Port Firefox
 
-## Contributing
+## Đóng góp
 
-Issues and PRs welcome. The codebase is plain vanilla JS — no build step, no dependencies. Pre-flight checklist before opening a PR:
+Issue và PR đều welcome. Codebase JS thuần — không build step, không dependency. Pre-flight checklist trước PR:
 
 - `node --check content.js && node --check background.js && node --check popup.js`
-- Manual test in a freshly reloaded extension on at least one English YouTube video, both tiers
-- If you touch `manifest.json`, bump the version and update both `manifest.json` and `content.js`'s `ECHOLY_VERSION` constant in lock-step
+- Test thủ công trong extension đã reload trên ít nhất 1 video YouTube tiếng Anh, cả 2 chế độ
+- Nếu sửa `manifest.json`, bump version và update đồng bộ `manifest.json` + hằng `YOUNOTE_VERSION` trong `content.js`
+
+## Lưu trữ và xuất bản dịch
+
+Mỗi lượt dịch (cả phần gốc + phần thuyết minh) được lưu cục bộ vào `chrome.storage.local`, giới hạn 500 lượt gần nhất (FIFO). Nút **Tải** trên toolbar overlay xuất toàn bộ lịch sử dịch ra file `.txt` UTF-8 với format:
+
+```
+[2026-05-14 14:32:08]
+  Gốc: Welcome back to the channel...
+  Dịch: Chào mừng bạn quay lại kênh...
+```
+
+File tên `younote-YYYYMMDD-HHmm.txt`. Lịch sử persist qua nhiều session, kèm URL video gốc trong header file để tra ngược dễ.
+
+## Sản phẩm
+
+YouNote là sản phẩm của **VCI** — đội ngũ phát triển công cụ AI và productivity bởi **cuongbx**.
 
 ## License
 
-[MIT](LICENSE) © 2026 Son Nguyen Tung
+[MIT](LICENSE) © 2026 cuongbx · VCI

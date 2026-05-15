@@ -1,96 +1,111 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Echoly</title>
-<link rel="stylesheet" href="popup.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouNote</title>
+  <link rel="stylesheet" href="popup.css" />
 </head>
+
 <body data-state="idle">
 
-<main class="shell">
+  <main class="shell">
 
-  <header class="topline">
-    <div class="brand">
-      <span class="mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-          <path d="M7 9v6M11 6v12M15 8v8M19 11v2"/>
-        </svg>
-      </span>
-      <div>
-        <p class="eyebrow">Live Translator</p>
-        <h1>Echoly</h1>
+    <header class="topline">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <path d="M7 9v6M11 6v12M15 8v8M19 11v2" />
+          </svg>
+        </span>
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">Live Translator</p>
+          <h1>YouNote</h1>
+        </div>
       </div>
-    </div>
-    <span class="dot" data-status-dot aria-hidden="true"></span>
-  </header>
-
-  <section class="row">
-    <label for="tier">Tier</label>
-    <select id="tier">
-      <option value="realtime">Realtime · clones speaker · &lt;1s</option>
-      <option value="standard">Standard · ~5s lag · cheaper</option>
-    </select>
-  </section>
-
-  <section class="row">
-    <label for="voice">Voice</label>
-    <select id="voice"></select>
-  </section>
-
-  <section class="row">
-    <label for="lang">Language</label>
-    <select id="lang"></select>
-  </section>
-
-  <section class="secret">
-    <div class="row">
-      <label for="kymaKey">Kyma key</label>
-      <span id="keyBadge" class="badge">missing</span>
-    </div>
-    <input id="kymaKey" type="password" placeholder="ky-..." autocomplete="off" spellcheck="false" />
-  </section>
-
-  <button class="action" id="toggle">Start</button>
-
-  <section class="mix">
-    <div class="mix-row">
-      <label for="originalVolume">Original</label>
-      <input id="originalVolume" type="range" min="0" max="100" value="18" />
-      <output id="originalOut">18</output>
-    </div>
-    <div class="mix-row">
-      <label for="voiceVolume">Voice</label>
-      <input id="voiceVolume" type="range" min="0" max="100" value="100" />
-      <output id="voiceOut">100</output>
-    </div>
-  </section>
-
-  <label class="toggle-row">
-    <span>Show source captions</span>
-    <input id="showSource" type="checkbox" />
-  </label>
-
-  <details class="advanced">
-    <summary>Advanced</summary>
-    <div class="advanced-body">
-      <div>
-        <strong>Pricing</strong>: Realtime ~$0.46 per 10 min · Standard ~$0.25 per 10 min. Charged from your Kyma balance.
+      <div class="ui-lang" role="tablist" aria-label="UI language">
+        <button type="button" class="ui-lang-btn" data-ui-lang="vi" title="Tiếng Việt">VI</button>
+        <button type="button" class="ui-lang-btn" data-ui-lang="en" title="English">EN</button>
+        <button type="button" class="ui-lang-btn" data-ui-lang="auto" data-i18n="uiLanguageAuto" title="Auto">Auto</button>
       </div>
-      <div>
-        Manage your account: <a href="https://kymaapi.com/billing" target="_blank">billing</a> ·
-        <a href="https://kymaapi.com/dashboard" target="_blank">session log</a>.
+      <span class="dot" data-status-dot aria-hidden="true"></span>
+    </header>
+
+    <section class="row">
+      <label for="tier" data-i18n="tierLabel">Tier</label>
+      <select id="tier">
+        <option value="standard" data-i18n="tierStandard">Standard · ~5s lag · cheaper</option>
+        <option value="realtime" data-i18n="tierRealtime">Realtime · clones speaker · &lt;1s</option>
+      </select>
+    </section>
+
+    <section class="row">
+      <label for="voice" data-i18n="voiceLabel">Voice</label>
+      <select id="voice"></select>
+    </section>
+
+    <section class="row">
+      <label for="lang" data-i18n="languageLabel">Language</label>
+      <select id="lang"></select>
+    </section>
+
+    <section class="secret">
+      <div class="row">
+        <label for="kymaKey" data-i18n="keyLabel">Key</label>
+        <span id="keyBadge" class="badge" data-i18n="keyMissing">missing</span>
       </div>
-      <div class="hint">
-        Sessions auto-stop at 60 minutes. Press Stop to end early.
+      <input id="kymaKey" type="password" data-i18n-placeholder="keyPlaceholder" placeholder="ky-..." autocomplete="off"
+        spellcheck="false" />
+    </section>
+
+    <button class="action" id="toggle" data-i18n="btnStart">Start</button>
+
+    <section class="mix">
+      <div class="mix-row">
+        <label for="originalVolume" data-i18n="originalLabel">Original</label>
+        <input id="originalVolume" type="range" min="0" max="100" value="18" />
+        <output id="originalOut">18</output>
       </div>
-    </div>
-  </details>
+      <div class="mix-row">
+        <label for="voiceVolume" data-i18n="voiceVolLabel">Voice</label>
+        <input id="voiceVolume" type="range" min="0" max="100" value="100" />
+        <output id="voiceOut">100</output>
+      </div>
+    </section>
 
-  <p class="status" id="status">Ready.</p>
+    <label class="toggle-row">
+      <span data-i18n="showSource">Show source captions</span>
+      <input id="showSource" type="checkbox" />
+    </label>
 
-</main>
+    <details class="advanced">
+      <summary data-i18n="advanced">Advanced</summary>
+      <div class="advanced-body">
+        <div data-i18n="pricingNote">
+          Pricing: Realtime ~$0.46 per 10 min · Standard ~$0.25 per 10 min. Charged from your Kyma balance.
+        </div>
+        <!-- <div>
+        <span data-i18n="manageAccount">Manage your account:</span>
+        <a href="https://kymaapi.com/billing" target="_blank" data-i18n="billingLink">billing</a> ·
+        <a href="https://kymaapi.com/dashboard" target="_blank" data-i18n="dashboardLink">session log</a>.
+      </div> -->
+        <div class="hint" data-i18n="autoStopHint">
+          Sessions auto-stop at 60 minutes. Press Stop to end early.
+        </div>
+      </div>
+    </details>
 
-<script src="popup.js"></script>
+    <p class="status" id="status" data-i18n="statusReady">Ready.</p>
+
+    <footer class="footer">
+      <span class="footer-mark" aria-hidden="true">VCI</span>
+      <span class="footer-text" data-i18n="attribution">Built by cuongbx · VCI</span>
+    </footer>
+
+  </main>
+
+  <script src="popup.js"></script>
 </body>
+
 </html>

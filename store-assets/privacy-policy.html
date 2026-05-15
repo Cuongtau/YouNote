@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Echoly — Privacy Policy</title>
+<title>YouNote — Chính sách bảo mật</title>
 <style>
 :root { color-scheme: light dark; }
 body { font: 16px/1.6 -apple-system, system-ui, "Segoe UI", sans-serif;
   max-width: 760px; margin: 40px auto; padding: 0 24px; color: #1a1a1f; }
 @media (prefers-color-scheme: dark) {
-  body { background: #0b0b0d; color: #e8e8ea; }
+  body { background: #0d0d10; color: #e8e8ea; }
   a { color: #ff9b5e; }
 }
 h1 { font-size: 28px; margin-bottom: 4px; }
@@ -24,69 +24,69 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(127,127
 </head>
 <body>
 
-<h1>Echoly — Privacy Policy</h1>
-<p class="sub">Last updated: 2026-05-08</p>
+<h1>YouNote — Chính sách bảo mật</h1>
+<p class="sub">Cập nhật lần cuối: 2026-05-14</p>
 
 <div class="tldr">
-<strong>TL;DR.</strong> Echoly does not collect, store, or sell any personal data. Your Kyma API key stays on your own device. Audio you choose to translate is sent directly to AI providers (Kyma and, for Realtime tier, OpenAI) for the sole purpose of producing the translation, then discarded. We have no servers, no analytics, no tracking.
+<strong>TL;DR.</strong> YouNote không thu thập, lưu trữ, hoặc bán bất kỳ dữ liệu cá nhân nào. Kyma API key của bạn ở yên trên máy bạn. Audio bạn chọn để dịch sẽ gửi trực tiếp tới các nhà cung cấp AI (Kyma, và OpenAI cho chế độ Thời gian thực) chỉ với mục đích duy nhất là tạo bản dịch, sau đó được loại bỏ. Chúng tôi không có server, không có analytics, không có tracking.
 </div>
 
-<h2>What Echoly is</h2>
-<p>Echoly is a Chrome extension that captures audio from a YouTube video you are watching and produces a live translated voice-over in your chosen language. It runs entirely in your browser. There is no Echoly-operated backend.</p>
+<h2>YouNote là gì</h2>
+<p>YouNote là Chrome extension capture audio từ video YouTube bạn đang xem và tạo lớp lồng tiếng dịch trực tiếp sang ngôn ngữ bạn chọn. Nó chạy hoàn toàn trong trình duyệt của bạn. Không có backend do YouNote vận hành.</p>
 
-<h2>What data is processed</h2>
+<h2>Dữ liệu được xử lý</h2>
 <ul>
-  <li><strong>Your Kyma API key.</strong> Stored locally in <code>chrome.storage.local</code> with <code>TRUSTED_CONTEXTS</code> access level so that page scripts on youtube.com cannot read it. The key never leaves your device except as the <code>Authorization: Bearer</code> header on requests you initiate to <code>api.kymaapi.com</code> (and, for Realtime tier, a short-lived ephemeral token to <code>api.openai.com</code>).</li>
-  <li><strong>YouTube audio.</strong> When you press Start, Echoly captures the audio of the video element on the active tab via the standard <code>HTMLMediaElement.captureStream()</code> API. Audio is streamed to your selected provider (see "Third-party processors" below) for transcription, translation, and synthesis. Echoly itself stores no audio at any time.</li>
-  <li><strong>Overlay layout.</strong> Position and size of the in-page panel are stored in your browser's <code>localStorage</code> for the youtube.com origin. Cosmetic only. No personal information.</li>
-  <li><strong>Settings.</strong> Tier, language, voice, and volume preferences are stored in <code>chrome.storage.local</code>. They never leave your device.</li>
+  <li><strong>Kyma API key của bạn.</strong> Lưu cục bộ trong <code>chrome.storage.local</code> với access level <code>TRUSTED_CONTEXTS</code> để page script trên youtube.com không đọc được. Key không bao giờ rời thiết bị của bạn ngoại trừ ở header <code>Authorization: Bearer</code> trên các request bạn khởi tạo tới <code>api.kymaapi.com</code> (và token ephemeral ngắn hạn tới <code>api.openai.com</code> cho chế độ Thời gian thực).</li>
+  <li><strong>Audio YouTube.</strong> Khi bạn bấm Bắt đầu, YouNote capture audio của video element trên tab đang active qua API chuẩn <code>HTMLMediaElement.captureStream()</code>. Audio được stream tới nhà cung cấp đã chọn (xem mục "Bên xử lý thứ ba" bên dưới) để transcribe, dịch, và tổng hợp giọng. Bản thân YouNote không lưu audio tại bất kỳ thời điểm nào.</li>
+  <li><strong>Layout overlay.</strong> Vị trí và kích thước của panel trên trang được lưu trong <code>localStorage</code> của trình duyệt cho origin youtube.com. Chỉ là mỹ thuật. Không có thông tin cá nhân.</li>
+  <li><strong>Cài đặt.</strong> Chế độ, ngôn ngữ, giọng, và mức âm lượng được lưu trong <code>chrome.storage.local</code>. Chúng không bao giờ rời thiết bị của bạn.</li>
 </ul>
 
-<h2>What data is NOT collected</h2>
+<h2>Dữ liệu KHÔNG được thu thập</h2>
 <ul>
-  <li>No telemetry, analytics, crash reports, or usage statistics.</li>
-  <li>No browsing history, video titles, URLs, or YouTube account information.</li>
-  <li>No personal identifiers, IP logging, cookies, or fingerprints.</li>
-  <li>No advertising, ad targeting, or third-party trackers.</li>
+  <li>Không telemetry, analytics, crash report, hoặc thống kê sử dụng.</li>
+  <li>Không lịch sử duyệt web, tiêu đề video, URL, hoặc thông tin tài khoản YouTube.</li>
+  <li>Không định danh cá nhân, log IP, cookie, hoặc fingerprint.</li>
+  <li>Không quảng cáo, ad targeting, hoặc tracker bên thứ ba.</li>
 </ul>
 
-<h2>Third-party processors</h2>
-<p>When you press Start, audio you select to translate is sent to one of the following providers under your own Kyma account:</p>
+<h2>Bên xử lý thứ ba</h2>
+<p>Khi bạn bấm Bắt đầu, audio bạn chọn để dịch sẽ gửi tới một trong các nhà cung cấp sau dưới tài khoản Kyma của chính bạn:</p>
 <ul>
-  <li><strong>Kyma API</strong> (<code>api.kymaapi.com</code>) — gateway. Forwards your audio to the underlying providers below and bills your Kyma balance. See <a href="https://kymaapi.com/privacy" target="_blank" rel="noopener">Kyma's privacy policy</a>.</li>
-  <li><strong>Standard tier</strong> uses, via Kyma: Groq (Whisper transcription), Google (Gemini translation), and MiniMax (text-to-speech).</li>
-  <li><strong>Realtime tier</strong> uses, via Kyma: OpenAI Realtime (one combined translate-and-speak model). After Kyma mints an ephemeral token, your browser opens a peer-to-peer WebRTC connection directly with <code>api.openai.com</code> for the duration of the session.</li>
+  <li><strong>Kyma API</strong> (<code>api.kymaapi.com</code>) — gateway. Forward audio của bạn tới các nhà cung cấp upstream bên dưới và trừ tiền từ số dư Kyma của bạn. Xem <a href="https://kymaapi.com/privacy" target="_blank" rel="noopener">chính sách bảo mật của Kyma</a>.</li>
+  <li><strong>Chế độ Tiêu chuẩn</strong> dùng, qua Kyma: Groq (Whisper transcription), Google (Gemini translation), và MiniMax (text-to-speech).</li>
+  <li><strong>Chế độ Thời gian thực</strong> dùng, qua Kyma: OpenAI Realtime (model translate-and-speak gộp). Sau khi Kyma mint một token ephemeral, trình duyệt của bạn mở kết nối peer-to-peer WebRTC trực tiếp với <code>api.openai.com</code> trong suốt session.</li>
 </ul>
-<p>Each provider processes your audio per its own privacy terms. Echoly is not a party to those terms — your Kyma account and your direct relationship with each provider are.</p>
+<p>Mỗi nhà cung cấp xử lý audio của bạn theo điều khoản riêng của họ. YouNote không phải là bên trong các điều khoản đó — tài khoản Kyma của bạn và quan hệ trực tiếp với từng nhà cung cấp mới là bên đó.</p>
 
-<h2>Data retention</h2>
-<p>Echoly retains nothing on its side. Provider-side retention follows each provider's policy; for transcription and TTS the audio is processed in-memory and not retained. Sessions automatically end after 60 minutes; closing the tab also ends the session.</p>
+<h2>Lưu trữ dữ liệu</h2>
+<p>YouNote không lưu giữ gì phía mình. Việc lưu trữ phía nhà cung cấp tuân theo chính sách của từng bên; với transcription và TTS, audio được xử lý in-memory và không lưu giữ. Session tự động kết thúc sau 60 phút; đóng tab cũng kết thúc session.</p>
 
-<h2>Permissions</h2>
+<h2>Quyền</h2>
 <ul>
-  <li><code>activeTab</code>, <code>scripting</code> — to inject the overlay panel into the YouTube tab when you press Start.</li>
-  <li><code>storage</code> — to remember your Kyma key and preferences across sessions.</li>
-  <li>Host permissions for <code>youtube.com</code>, <code>api.kymaapi.com</code>, <code>api.openai.com</code> — to capture YouTube audio and reach the AI providers listed above.</li>
-</ul>
-
-<h2>Your rights and choices</h2>
-<ul>
-  <li>Stop a session at any time with the Stop button or by closing the tab.</li>
-  <li>Remove your Kyma key from the popup at any time, or uninstall the extension to wipe all locally stored data.</li>
-  <li>Use Echoly without an account; it has none.</li>
+  <li><code>activeTab</code>, <code>scripting</code> — để inject overlay panel vào tab YouTube khi bạn bấm Bắt đầu.</li>
+  <li><code>storage</code> — để nhớ Kyma key và preferences của bạn qua các session.</li>
+  <li>Host permissions cho <code>youtube.com</code>, <code>api.kymaapi.com</code>, <code>api.openai.com</code> — để capture audio YouTube và truy cập các nhà cung cấp AI nêu trên.</li>
 </ul>
 
-<h2>Children</h2>
-<p>Echoly is not directed at children under 13. The extension processes no personal information that would identify a user of any age.</p>
+<h2>Quyền và lựa chọn của bạn</h2>
+<ul>
+  <li>Dừng session bất kỳ lúc nào bằng nút Dừng hoặc đóng tab.</li>
+  <li>Xóa Kyma key khỏi popup bất kỳ lúc nào, hoặc gỡ extension để xóa toàn bộ dữ liệu lưu cục bộ.</li>
+  <li>Dùng YouNote không cần tài khoản; nó không có.</li>
+</ul>
 
-<h2>Changes to this policy</h2>
-<p>If we materially change how Echoly handles data we will update this page and bump the date at the top. Continued use after a change constitutes acceptance.</p>
+<h2>Trẻ em</h2>
+<p>YouNote không hướng tới trẻ em dưới 13 tuổi. Extension không xử lý thông tin cá nhân nào có thể định danh người dùng ở bất kỳ độ tuổi nào.</p>
 
-<h2>Contact</h2>
-<p>Questions or requests: <a href="mailto:sonxpiaz@gmail.com">sonxpiaz@gmail.com</a></p>
+<h2>Thay đổi chính sách</h2>
+<p>Nếu chúng tôi thay đổi đáng kể cách YouNote xử lý dữ liệu, chúng tôi sẽ cập nhật trang này và bump ngày ở đầu trang. Tiếp tục sử dụng sau khi thay đổi đồng nghĩa với việc chấp nhận.</p>
+
+<h2>Liên hệ</h2>
+<p>Câu hỏi hoặc yêu cầu: <a href="mailto:sonxpiaz@gmail.com">sonxpiaz@gmail.com</a></p>
 
 <footer>
-Echoly is open-source. Source: <a href="https://github.com/sonpiaz/echoly" target="_blank" rel="noopener">github.com/sonpiaz/echoly</a> (link will be active after release).
+YouNote là open-source. Source: <a href="https://github.com/sonpiaz/echoly" target="_blank" rel="noopener">github.com/sonpiaz/echoly</a>
 </footer>
 
 </body>

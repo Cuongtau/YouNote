@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
-# pack.sh — bundle Echoly into a zip ready for Web Store upload or beta sideload.
-# Reads the version from manifest.json so the output filename auto-tracks bumps.
+# pack.sh — convenience wrapper around `npm run pack`.
+# Builds dist/ via build.js then zips it via pack.js.
+# Output: ~/younote-vX.Y.Z.zip ready for Web Store upload or sideload.
 set -euo pipefail
 
 cd "$(dirname "$0")"
-VERSION=$(node -p "require('./manifest.json').version")
-OUT="$HOME/echoly-v${VERSION}.zip"
 
-rm -f "$OUT"
-zip -rq "$OUT" . \
-  -x "*.DS_Store" "node_modules/*" ".git/*" "*.swp" "Thumbs.db" "pack.sh"
+if [ ! -d node_modules ]; then
+  echo "node_modules/ not found — running npm install (one-time, ~30 MB)…"
+  npm install
+fi
 
-SIZE=$(du -h "$OUT" | cut -f1)
-COUNT=$(unzip -l "$OUT" | tail -1 | awk '{print $2}')
-echo "✓ Packed $OUT ($SIZE, $COUNT files)"
+npm run pack

@@ -1,0 +1,459 @@
+{
+  "appName": {
+    "message": "YouNote — Live YouTube Translation"
+  },
+  "appShortName": {
+    "message": "YouNote"
+  },
+  "appDescription": {
+    "message": "Hear any YouTube video in your language. Live AI dubbing, picks voice + language, runs on your Kyma key."
+  },
+  "actionTitle": {
+    "message": "YouNote"
+  },
+  "eyebrow": {
+    "message": "Live Translator"
+  },
+  "tierLabel": {
+    "message": "Tier"
+  },
+  "tierStandard": {
+    "message": "Standard · ~5s lag · cheaper"
+  },
+  "tierRealtime": {
+    "message": "Realtime · clones speaker · <1s"
+  },
+  "voiceLabel": {
+    "message": "Voice"
+  },
+  "languageLabel": {
+    "message": "Language"
+  },
+  "keyLabel": {
+    "message": "Key"
+  },
+  "keyPlaceholder": {
+    "message": "ky-..."
+  },
+  "keyMissing": {
+    "message": "missing"
+  },
+  "keySaved": {
+    "message": "saved"
+  },
+  "keyCheck": {
+    "message": "check"
+  },
+  "btnStart": {
+    "message": "Start"
+  },
+  "btnStop": {
+    "message": "Stop"
+  },
+  "btnHide": {
+    "message": "Hide"
+  },
+  "btnShow": {
+    "message": "Show"
+  },
+  "btnDownload": {
+    "message": "Save"
+  },
+  "btnDownloadFull": {
+    "message": "Download transcript"
+  },
+  "btnHistory": {
+    "message": "History"
+  },
+  "btnHistoryFull": {
+    "message": "View past translations"
+  },
+  "btnClearHistory": {
+    "message": "Clear all"
+  },
+  "btnClose": {
+    "message": "Close"
+  },
+  "btnCopy": {
+    "message": "Copy"
+  },
+  "btnDeleteEntry": {
+    "message": "Delete this turn"
+  },
+  "historyTitle": {
+    "message": "Translation history"
+  },
+  "originalLabel": {
+    "message": "Original"
+  },
+  "voiceVolLabel": {
+    "message": "Voice"
+  },
+  "showSource": {
+    "message": "Show source captions"
+  },
+  "advanced": {
+    "message": "Advanced"
+  },
+  "pricingNote": {
+    "message": "Pricing: Realtime ~$0.46 per 10 min · Standard ~$0.25 per 10 min. Charged from your Kyma balance."
+  },
+  "manageAccount": {
+    "message": "Manage your account:"
+  },
+  "billingLink": {
+    "message": "billing"
+  },
+  "dashboardLink": {
+    "message": "session log"
+  },
+  "autoStopHint": {
+    "message": "Sessions auto-stop at 60 minutes. Press Stop to end early."
+  },
+  "statusReady": {
+    "message": "Ready."
+  },
+  "statusReadyNoKey": {
+    "message": "Add a key to start."
+  },
+  "statusConnecting": {
+    "message": "Connecting"
+  },
+  "statusTranslating": {
+    "message": "Translating"
+  },
+  "statusTranslatingTo": {
+    "message": "Translating to $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPaused": {
+    "message": "Paused."
+  },
+  "statusStopped": {
+    "message": "Stopped"
+  },
+  "statusAcquiringAudio": {
+    "message": "Acquiring audio"
+  },
+  "statusSwitchVoice": {
+    "message": "Switching voice"
+  },
+  "statusSwitchLang": {
+    "message": "Switching to $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusError": {
+    "message": "Translation error"
+  },
+  "statusPipelineError": {
+    "message": "Pipeline error"
+  },
+  "errAddKey": {
+    "message": "Add a Kyma key first."
+  },
+  "errCannotStart": {
+    "message": "Could not start."
+  },
+  "errOpenYT": {
+    "message": "Open a YouTube video first."
+  },
+  "errNoActiveTab": {
+    "message": "No active tab."
+  },
+  "errNoVideo": {
+    "message": "No YouTube video on this page."
+  },
+  "errAudioNotReady": {
+    "message": "YouTube audio not ready. Press play, then Start again."
+  },
+  "errCannotCapture": {
+    "message": "This Chrome build cannot capture YouTube audio."
+  },
+  "errBrowserNoRecord": {
+    "message": "Browser cannot record audio for chunked pipeline."
+  },
+  "errNetwork": {
+    "message": "Network error reaching Kyma."
+  },
+  "errMintNoSecret": {
+    "message": "Kyma response missing client_secret."
+  },
+  "errOutOfBalance": {
+    "message": "Out of Kyma balance."
+  },
+  "errTooManySessions": {
+    "message": "Three sessions already running. Stop one or wait."
+  },
+  "errUpstream": {
+    "message": "Provider unreachable. Try again shortly."
+  },
+  "errRateLimited": {
+    "message": "Provider rate limit hit. Wait 30s."
+  },
+  "errKymaPrefix": {
+    "message": "Kyma $STATUS$: $MSG$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      },
+      "msg": {
+        "content": "$2"
+      }
+    }
+  },
+  "errSdpExchange": {
+    "message": "SDP exchange $STATUS$: $MSG$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      },
+      "msg": {
+        "content": "$2"
+      }
+    }
+  },
+  "errSwitchFailed": {
+    "message": "Switch failed — keeping current session"
+  },
+  "errStaleSession": {
+    "message": "Stale session."
+  },
+  "errSessionRunning": {
+    "message": "Session already running."
+  },
+  "errCancelledBeforeConnect": {
+    "message": "Cancelled before connect completed."
+  },
+  "errAudioContext": {
+    "message": "AudioContext unavailable: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "errUnknownTier": {
+    "message": "Unknown tier: $TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "errUnknownMessage": {
+    "message": "Unknown message: $TYPE$",
+    "placeholders": {
+      "type": {
+        "content": "$1"
+      }
+    }
+  },
+  "topUp": {
+    "message": "Top up"
+  },
+  "tierLockToast": {
+    "message": "Stop and Start to switch tiers"
+  },
+  "sessionEndingSoon": {
+    "message": "Session ends in 5 min"
+  },
+  "sessionAutoStopped": {
+    "message": "Auto-stopped at 60 min — start again to continue."
+  },
+  "ytNavigated": {
+    "message": "YouTube navigated."
+  },
+  "connectionLost": {
+    "message": "Connection lost."
+  },
+  "voiceAuto": {
+    "message": "Auto · clones speaker"
+  },
+  "liveLabel": {
+    "message": "Listening"
+  },
+  "colSourceLabel": {
+    "message": "Source"
+  },
+  "colTargetLabel": {
+    "message": "Translation"
+  },
+  "statusAdPlaying": {
+    "message": "Ad playing — paused"
+  },
+  "statusVideoEnded": {
+    "message": "Video ended — waiting for next"
+  },
+  "autoRestarted": {
+    "message": "Switched to new video"
+  },
+  "compareEmpty": {
+    "message": "No translations yet. Start the video to translate."
+  },
+  "uiLanguageLabel": {
+    "message": "Interface"
+  },
+  "uiLanguageAuto": {
+    "message": "Auto"
+  },
+  "btnMinimize": {
+    "message": "Minimize"
+  },
+  "btnMinimizeFull": {
+    "message": "Minimize to floating button"
+  },
+  "btnRestore": {
+    "message": "Restore"
+  },
+  "btnRestoreFull": {
+    "message": "Restore YouNote panel"
+  },
+  "btnSidebarToggle": {
+    "message": "Right column"
+  },
+  "downloadEmpty": {
+    "message": "No translations yet to download."
+  },
+  "downloadDone": {
+    "message": "Downloaded $COUNT$ translations.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadHeader": {
+    "message": "YouNote — Translation transcript"
+  },
+  "downloadVideoLine": {
+    "message": "Video: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadGeneratedAt": {
+    "message": "Generated at: $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadCount": {
+    "message": "Turns: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadSourceLabel": {
+    "message": "Source"
+  },
+  "downloadTargetLabel": {
+    "message": "Target"
+  },
+  "historyCleared": {
+    "message": "History cleared."
+  },
+  "historyEmpty": {
+    "message": "No translation history yet."
+  },
+  "attribution": {
+    "message": "Built by cuongbx · VCI"
+  },
+  "productInfo": {
+    "message": "YouNote is a VCI product — AI and productivity tools built by cuongbx."
+  },
+  "voiceMarinName": {
+    "message": "Marin"
+  },
+  "voiceAlloyName": {
+    "message": "Alloy"
+  },
+  "voiceAshName": {
+    "message": "Ash"
+  },
+  "voiceBalladName": {
+    "message": "Ballad"
+  },
+  "voiceCoralName": {
+    "message": "Coral"
+  },
+  "voiceEchoName": {
+    "message": "Echo"
+  },
+  "voiceSageName": {
+    "message": "Sage"
+  },
+  "voiceShimmerName": {
+    "message": "Shimmer"
+  },
+  "voiceVerseName": {
+    "message": "Verse"
+  },
+  "voiceMagneticMan": {
+    "message": "Magnetic Man"
+  },
+  "voiceCaptivatingFemale": {
+    "message": "Captivating Female"
+  },
+  "voiceDeepVoiceMan": {
+    "message": "Deep Voice Man"
+  },
+  "voiceConfidentWoman": {
+    "message": "Confident Woman"
+  },
+  "voiceNewsAnchor": {
+    "message": "News Anchor"
+  },
+  "langEn": {
+    "message": "English"
+  },
+  "langVi": {
+    "message": "Vietnamese"
+  },
+  "langJa": {
+    "message": "Japanese"
+  },
+  "langKo": {
+    "message": "Korean"
+  },
+  "langZh": {
+    "message": "Chinese"
+  },
+  "langFr": {
+    "message": "French"
+  },
+  "langEs": {
+    "message": "Spanish"
+  },
+  "langDe": {
+    "message": "German"
+  },
+  "langPt": {
+    "message": "Portuguese"
+  },
+  "langHi": {
+    "message": "Hindi"
+  },
+  "langId": {
+    "message": "Indonesian"
+  },
+  "langIt": {
+    "message": "Italian"
+  },
+  "langRu": {
+    "message": "Russian"
+  }
+}

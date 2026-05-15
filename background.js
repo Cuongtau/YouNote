@@ -1,13 +1,12 @@
-// Echoly background service worker — single source of truth for session state.
+// YouNote background service worker — single source of truth for session state.
 //
-// Popup is a passive renderer: it never reads chrome.storage to decide running
-// state. Content script owns the WebRTC PeerConnection lifecycle. Background
-// glues them: ensureContentScript(tabId) makes Start work without a refresh,
-// state.* is the canonical snapshot, BACKGROUND_STATE_UPDATE pushes to popup,
-// CONTENT_UPDATE pushes to the active YT tab.
+// Popup is a passive renderer. Content script owns the WebRTC PeerConnection
+// lifecycle. Background glues them: ensureContentScript(tabId) makes Start
+// work without a refresh. state.* is the canonical snapshot. Status fields
+// hold i18n keys (e.g. "statusReady"); popup resolves to text via chrome.i18n.
 
 const DEFAULT_SETTINGS = {
-  tier: "realtime",
+  tier: "standard",
   targetLanguage: "vi",
   realtimeVoice: "marin",
   // Standard tier (Minimax chunked pipeline). Default voice is Magnetic Man,
@@ -17,22 +16,24 @@ const DEFAULT_SETTINGS = {
   voiceVolume: 100,
   showSource: false,
   kymaKey: "",
+  // UI language override. "auto" = use Chrome's locale (chrome.i18n).
+  // "vi" / "en" = force a specific locale via manual messages.json fetch.
+  uiLanguage: "auto",
 };
 
-// In-memory state. Resets when the service worker cold-starts; that's
-// intentional — the user gets a clean idle on cold start.
+// In-memory state. Resets when the service worker cold-starts.
 const state = {
   running: false,
   connecting: false,
   paused: false,
   tabId: null,
-  status: "Ready",
+  status: "statusReady",
   errorMessage: "",
   ...DEFAULT_SETTINGS,
 };
 
 // Restrict storage access so rogue page scripts on youtube.com cannot read
-// the user's Kyma key. Sticky, no retry needed.
+// the user's Kyma key.
 chrome.storage.local
   .setAccessLevel?.({ accessLevel: "TRUSTED_CONTEXTS" })
   .catch(() => {});
@@ -45,8 +46,6 @@ function snapshot() {
 }
 
 function broadcastToPopup() {
-  // Debounce: 1 broadcast per 50 ms. Popup re-renders are cheap but spamming
-  // is wasteful while volume sliders drag.
   const now = Date.now();
   if (now - lastBroadcastAt < BROADCAST_DEBOUNCE_MS) return;
   lastBroadcastAt = now;
@@ -66,14 +65,12 @@ function isYouTubeUrl(url) {
 
 async function activeYouTubeTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab) throw new Error("No active tab.");
-  if (!isYouTubeUrl(tab.url)) throw new Error("Open a YouTube video first.");
+  if (!tab) throw { i18n: "errNoActiveTab" };
+  if (!isYouTubeUrl(tab.url)) throw { i18n: "errOpenYT" };
   return tab;
 }
 
-// Ensure content script is alive in the target tab. PING first; on no-reply,
-// inject. This is what makes Start work in tabs that were open before the
-// extension was installed or reloaded.
+// Ensure content script is alive in the target tab.
 async function ensureContentScript(tabId) {
   try {
     const reply = await chrome.tabs.sendMessage(tabId, { type: "CONTENT_PING" });
@@ -85,8 +82,6 @@ async function ensureContentScript(tabId) {
     target: { tabId },
     files: ["content.js"],
   });
-  // Inserting CSS via scripting API too, since content_scripts manifest entry
-  // does not run on the just-injected page if the tab pre-existed extension.
   try {
     await chrome.scripting.insertCSS({
       target: { tabId },
@@ -116,19 +111,19 @@ async function persistSettings(partial) {
 
 async function handleStart(settings) {
   if (state.running || state.connecting) {
-    return { ok: false, error: "Session already running." };
+    return { ok: false, error: "errSessionRunning" };
   }
   await persistSettings(settings || {});
   let tab;
   try {
     tab = await activeYouTubeTab();
   } catch (err) {
-    return { ok: false, error: err.message };
+    return { ok: false, error: err?.i18n || err?.message || String(err) };
   }
   state.tabId = tab.id;
   state.connecting = true;
   state.errorMessage = "";
-  state.status = "Connecting";
+  state.status = "statusConnecting";
   broadcastToPopup();
 
   try {
@@ -138,17 +133,23 @@ async function handleStart(settings) {
       settings: snapshot(),
     });
     if (!reply?.ok) {
-      throw new Error(reply?.error || "Could not start translation.");
+      throw reply?.error || "errCannotStart";
     }
     state.connecting = false;
     state.running = true;
-    state.status = "Translating";
+    state.status = "statusTranslating";
     broadcastToPopup();
     return { ok: true, state: snapshot() };
   } catch (err) {
     state.connecting = false;
     state.running = false;
-    state.errorMessage = err.message || String(err);
+    // err may be: an i18n key string, an i18n payload object {key, subs},
+    // an Error, or a plain string. Preserve as-is so popup can resolve.
+    if (typeof err === "string" || (err && typeof err === "object" && err.key)) {
+      state.errorMessage = err;
+    } else {
+      state.errorMessage = err?.message || String(err);
+    }
     state.status = state.errorMessage;
     broadcastToPopup();
     return { ok: false, error: state.errorMessage };
@@ -160,7 +161,7 @@ async function handleStop() {
   state.running = false;
   state.connecting = false;
   state.paused = false;
-  state.status = "Stopped";
+  state.status = "statusStopped";
   broadcastToPopup();
   if (tabId) {
     try {
@@ -184,7 +185,7 @@ async function handleUpdateSettings(settings) {
       });
       if (reply?.state) Object.assign(state, reply.state);
     } catch (err) {
-      state.errorMessage = err.message || String(err);
+      state.errorMessage = err?.message || String(err);
       broadcastToPopup();
     }
   }
@@ -194,7 +195,6 @@ async function handleUpdateSettings(settings) {
 async function handleUpdateVolume(originalVolume, voiceVolume) {
   if (typeof originalVolume === "number") state.originalVolume = originalVolume;
   if (typeof voiceVolume === "number") state.voiceVolume = voiceVolume;
-  // Persist debounced — slider drag fires many times.
   chrome.storage.local
     .set({ originalVolume: state.originalVolume, voiceVolume: state.voiceVolume })
     .catch(() => {});
@@ -217,8 +217,9 @@ function handleContentEvent(message) {
   if (message.type === "CONTENT_STATE") {
     if (typeof message.running === "boolean") state.running = message.running;
     if (typeof message.paused === "boolean") state.paused = message.paused;
-    if (typeof message.status === "string") state.status = message.status;
-    if (typeof message.errorMessage === "string") state.errorMessage = message.errorMessage;
+    // Status can be a bare key string or {key, subs} payload.
+    if (message.status !== undefined) state.status = message.status;
+    if (message.errorMessage !== undefined) state.errorMessage = message.errorMessage;
     broadcastToPopup();
   }
   if (message.type === "CONTENT_ENDED") {
@@ -226,21 +227,18 @@ function handleContentEvent(message) {
     state.connecting = false;
     state.paused = false;
     state.tabId = null;
-    state.status = message.reason || "Stopped";
+    state.status = message.reason || "statusStopped";
     broadcastToPopup();
   }
 }
 
-// Popup → background → content router.
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  // Content-originated messages (have sender.tab).
   if (sender.tab) {
     handleContentEvent(message);
     sendResponse?.({ ok: true });
     return false;
   }
 
-  // Popup-originated messages (no sender.tab).
   (async () => {
     try {
       switch (message?.type) {
@@ -264,16 +262,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           ));
           break;
         default:
-          sendResponse({ ok: false, error: "Unknown message: " + message?.type });
+          sendResponse({ ok: false, error: { key: "errUnknownMessage", subs: [String(message?.type)] } });
       }
     } catch (err) {
       sendResponse({ ok: false, error: err?.message || String(err) });
     }
   })();
-  return true;  // async sendResponse
+  return true;
 });
 
-// Tab close / navigate away → stop session cleanly so Kyma sees the /end.
 chrome.tabs.onRemoved.addListener((tabId) => {
   if (tabId === state.tabId) {
     void handleStop();
@@ -282,8 +279,6 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (tabId !== state.tabId) return;
   if (!changeInfo.url) return;
-  // YT is a SPA; URL change happens for /watch?v= switches too.
-  // Stop on any URL change so the new video starts clean.
   void handleStop();
 });
 

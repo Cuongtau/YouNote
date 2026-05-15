@@ -1,6 +1,42 @@
-// Echoly popup — passive renderer. Background owns state. Popup queries
+// YouNote popup — passive renderer. Background owns state. Popup queries
 // GET_STATE on open, subscribes to BACKGROUND_STATE_UPDATE pushes, and
 // dispatches user actions via runtime messages.
+//
+// All user-visible strings flow through chrome.i18n. Background sends
+// status as i18n keys (e.g. "statusConnecting"); popup resolves to text.
+
+// ───── i18n with manual locale override ──────────────────────────────────
+// chrome.i18n.getMessage() picks locale from Chrome's UI language and
+// cannot be overridden at runtime. To let the user pick UI language inside
+// our popup (independent of Chrome's setting), we manually fetch the
+// matching messages.json and resolve from it; falling back to chrome.i18n
+// when "auto".
+let manualMessages = null;
+async function loadManualMessages(locale) {
+  if (!locale || locale === "auto") { manualMessages = null; return; }
+  try {
+    const url = chrome.runtime.getURL(`_locales/${locale}/messages.json`);
+    const r = await fetch(url);
+    if (r.ok) manualMessages = await r.json();
+  } catch { manualMessages = null; }
+}
+function resolveManual(entry, subs) {
+  let msg = entry.message || "";
+  if (entry.placeholders && subs) {
+    for (const [name, def] of Object.entries(entry.placeholders)) {
+      const val = String(def.content || "").replace(/\$(\d+)/g,
+        (_, n) => subs[parseInt(n, 10) - 1] ?? "");
+      msg = msg.split(`$${name.toUpperCase()}$`).join(val);
+    }
+  } else if (subs) {
+    subs.forEach((v, i) => { msg = msg.split(`$${i + 1}`).join(v); });
+  }
+  return msg;
+}
+function t(key, subs) {
+  if (manualMessages?.[key]?.message) return resolveManual(manualMessages[key], subs);
+  return chrome.i18n.getMessage(key, subs) || key;
+}
 
 const $ = (id) => document.getElementById(id);
 const tierSelect = $("tier");
@@ -16,65 +52,89 @@ const originalOut = $("originalOut");
 const voiceOut = $("voiceOut");
 const showSourceCheckbox = $("showSource");
 
+// Languages: code → i18n key for display name. The code is the canonical
+// identifier sent to the translation pipeline; the label is locale-dependent.
 const LANGUAGES = [
-  ["en", "English"], ["vi", "Vietnamese"], ["ja", "Japanese"],
-  ["ko", "Korean"], ["zh", "Chinese"], ["fr", "French"],
-  ["es", "Spanish"], ["de", "German"], ["pt", "Portuguese"],
-  ["hi", "Hindi"], ["id", "Indonesian"], ["it", "Italian"],
-  ["ru", "Russian"],
+  ["en", "langEn"], ["vi", "langVi"], ["ja", "langJa"],
+  ["ko", "langKo"], ["zh", "langZh"], ["fr", "langFr"],
+  ["es", "langEs"], ["de", "langDe"], ["pt", "langPt"],
+  ["hi", "langHi"], ["id", "langId"], ["it", "langIt"],
+  ["ru", "langRu"],
 ];
 const REALTIME_VOICES = [
-  { id: "", name: "Auto · clones speaker" },
-  { id: "marin", name: "Marin" },
-  { id: "alloy", name: "Alloy" },
-  { id: "ash", name: "Ash" },
-  { id: "ballad", name: "Ballad" },
-  { id: "coral", name: "Coral" },
-  { id: "echo", name: "Echo" },
-  { id: "sage", name: "Sage" },
-  { id: "shimmer", name: "Shimmer" },
-  { id: "verse", name: "Verse" },
+  { id: "", nameKey: "voiceAuto" },
+  { id: "marin",   nameKey: "voiceMarinName" },
+  { id: "alloy",   nameKey: "voiceAlloyName" },
+  { id: "ash",     nameKey: "voiceAshName" },
+  { id: "ballad",  nameKey: "voiceBalladName" },
+  { id: "coral",   nameKey: "voiceCoralName" },
+  { id: "echo",    nameKey: "voiceEchoName" },
+  { id: "sage",    nameKey: "voiceSageName" },
+  { id: "shimmer", nameKey: "voiceShimmerName" },
+  { id: "verse",   nameKey: "voiceVerseName" },
 ];
 // Standard tier — Minimax `speech-02-turbo` voice IDs. Cross-language: each
 // voice speaks any of the 13 target languages. Curated from the 333-voice
 // catalog after a Vietnamese listening test (Son, 2026-05-08).
 const STANDARD_VOICES = [
-  { id: "English_magnetic_voiced_man",  name: "Magnetic Man" },
-  { id: "English_captivating_female1",  name: "Captivating Female" },
-  { id: "English_ManWithDeepVoice",     name: "Deep Voice Man" },
-  { id: "English_ConfidentWoman",       name: "Confident Woman" },
-  { id: "Chinese (Mandarin)_News_Anchor", name: "News Anchor" },
+  { id: "English_magnetic_voiced_man",      nameKey: "voiceMagneticMan" },
+  { id: "English_captivating_female1",      nameKey: "voiceCaptivatingFemale" },
+  { id: "English_ManWithDeepVoice",         nameKey: "voiceDeepVoiceMan" },
+  { id: "English_ConfidentWoman",           nameKey: "voiceConfidentWoman" },
+  { id: "Chinese (Mandarin)_News_Anchor",   nameKey: "voiceNewsAnchor" },
 ];
 
 let state = {
   running: false, connecting: false, paused: false,
-  tier: "realtime", targetLanguage: "vi",
+  tier: "standard", targetLanguage: "vi",
   realtimeVoice: "marin",
   standardVoice: "English_magnetic_voiced_man",
   originalVolume: 18, voiceVolume: 100, showSource: false,
-  kymaKey: "", status: "Ready",
+  kymaKey: "", status: "statusReady",
+  uiLanguage: "auto",
 };
 
+// Resolve a status payload from background into displayable text. Background
+// sends either a bare i18n key ("statusConnecting") or an object
+// { key, subs: [...] } when the message has placeholders.
+function resolveStatus(s) {
+  if (!s) return "";
+  if (typeof s === "string") return t(s);
+  if (typeof s === "object" && s.key) return t(s.key, s.subs || []);
+  return String(s);
+}
+
+// Apply chrome.i18n to every element with data-i18n / data-i18n-placeholder.
+// Called once at init; subsequent dynamic content uses t() directly.
+function applyStaticI18n(root = document) {
+  for (const el of root.querySelectorAll("[data-i18n]")) {
+    const msg = t(el.dataset.i18n);
+    if (msg) el.textContent = msg;
+  }
+  for (const el of root.querySelectorAll("[data-i18n-placeholder]")) {
+    const msg = t(el.dataset.i18nPlaceholder);
+    if (msg) el.placeholder = msg;
+  }
+}
+
 function populateLanguages() {
-  for (const [code, name] of LANGUAGES) {
+  for (const [code, nameKey] of LANGUAGES) {
     const opt = document.createElement("option");
     opt.value = code;
-    opt.textContent = name;
+    opt.textContent = t(nameKey);
     langSelect.appendChild(opt);
   }
 }
 
 // Voice list swaps between tiers. Called whenever the tier changes so the
-// dropdown only shows valid voices for the current pipeline. Tries to keep
-// the prior selection if the new tier has a matching id; otherwise falls
-// back to the first option.
+// dropdown only shows valid voices for the current pipeline.
 function repopulateVoices(tier, preferredVoiceId) {
   const list = tier === "standard" ? STANDARD_VOICES : REALTIME_VOICES;
   voiceSelect.replaceChildren();
   for (const v of list) {
     const opt = document.createElement("option");
     opt.value = v.id;
-    opt.textContent = v.name;
+    opt.textContent = t(v.nameKey);
     voiceSelect.appendChild(opt);
   }
   const wanted = preferredVoiceId ?? "";
@@ -104,12 +164,12 @@ function setStateClass(name) {
 function setKeyBadge(k) {
   keyBadge.classList.remove("ok", "warn");
   if (!k) {
-    keyBadge.textContent = "missing";
+    keyBadge.textContent = t("keyMissing");
   } else if (k.startsWith("ky") || k.startsWith("kyma-")) {
-    keyBadge.textContent = "saved";
+    keyBadge.textContent = t("keySaved");
     keyBadge.classList.add("ok");
   } else {
-    keyBadge.textContent = "check";
+    keyBadge.textContent = t("keyCheck");
     keyBadge.classList.add("warn");
   }
 }
@@ -121,8 +181,6 @@ function applyState(s) {
     if (tierSelect.value !== allowed) tierSelect.value = allowed;
   }
   if (typeof state.targetLanguage === "string") langSelect.value = state.targetLanguage;
-  // Voice list depends on tier — repopulate then select the saved id for
-  // the current tier (realtimeVoice when realtime, standardVoice when standard).
   const activeVoice = tierSelect.value === "standard" ? state.standardVoice : state.realtimeVoice;
   repopulateVoices(tierSelect.value, activeVoice);
   if (typeof state.originalVolume === "number") {
@@ -139,40 +197,39 @@ function applyState(s) {
     setKeyBadge(state.kymaKey);
   }
 
-  // Status + button
+  // Status + button. Background sends keys; we resolve here.
   if (state.connecting) {
     setStateClass("connecting");
-    statusEl.textContent = state.status || "Connecting";
-    toggleBtn.textContent = "Stop";
+    statusEl.textContent = resolveStatus(state.status) || t("statusConnecting");
+    toggleBtn.textContent = t("btnStop");
     toggleBtn.classList.add("is-live");
   } else if (state.running && state.paused) {
     setStateClass("paused");
-    statusEl.textContent = "Paused.";
-    toggleBtn.textContent = "Stop";
+    statusEl.textContent = t("statusPaused");
+    toggleBtn.textContent = t("btnStop");
     toggleBtn.classList.add("is-live");
   } else if (state.running) {
     setStateClass("active");
-    const langName = LANGUAGES.find(([c]) => c === state.targetLanguage)?.[1] || state.targetLanguage;
-    statusEl.textContent = `Translating to ${langName}.`;
-    toggleBtn.textContent = "Stop";
+    const langKey = LANGUAGES.find(([c]) => c === state.targetLanguage)?.[1];
+    const langName = langKey ? t(langKey) : state.targetLanguage;
+    statusEl.textContent = t("statusTranslatingTo", [langName]);
+    toggleBtn.textContent = t("btnStop");
     toggleBtn.classList.add("is-live");
   } else if (state.errorMessage) {
     setStateClass("error");
-    statusEl.textContent = state.errorMessage;
-    toggleBtn.textContent = "Start";
+    statusEl.textContent = resolveStatus(state.errorMessage);
+    toggleBtn.textContent = t("btnStart");
     toggleBtn.classList.remove("is-live");
   } else {
     setStateClass("idle");
-    statusEl.textContent = state.kymaKey ? "Ready." : "Add a Kyma key to start.";
-    toggleBtn.textContent = "Start";
+    statusEl.textContent = state.kymaKey ? t("statusReady") : t("statusReadyNoKey");
+    toggleBtn.textContent = t("btnStart");
     toggleBtn.classList.remove("is-live");
   }
   toggleBtn.disabled = false;
 }
 
 function readSettings() {
-  // Only write the voice key for the active tier so the other tier's saved
-  // pick survives a tier toggle round-trip without being clobbered.
   const tier = tierSelect.value;
   const voiceKey = tier === "standard" ? "standardVoice" : "realtimeVoice";
   return {
@@ -222,14 +279,14 @@ async function onToggle() {
     } else {
       const settings = readSettings();
       if (!settings.kymaKey) {
-        statusEl.textContent = "Add a Kyma key first.";
+        statusEl.textContent = t("errAddKey");
         setStateClass("error");
         toggleBtn.disabled = false;
         return;
       }
       const reply = await send({ type: "START", settings });
       if (!reply?.ok) {
-        statusEl.textContent = reply?.error || "Could not start.";
+        statusEl.textContent = resolveStatus(reply?.error) || t("errCannotStart");
         setStateClass("error");
         toggleBtn.disabled = false;
         return;
@@ -246,9 +303,6 @@ async function onToggle() {
 
 // ───── Events ─────
 tierSelect.addEventListener("change", () => {
-  // Swap the voice list to match the new tier and pick the saved voice for
-  // that tier (realtimeVoice when realtime, standardVoice when standard).
-  // Then push settings so background restarts the session on the new pipeline.
   const tier = tierSelect.value;
   const wanted = tier === "standard" ? state.standardVoice : state.realtimeVoice;
   repopulateVoices(tier, wanted);
@@ -270,13 +324,61 @@ chrome.runtime.onMessage.addListener((message) => {
   }
 });
 
+// ───── UI language toggle ─────
+function applyUiLanguageButtons(active) {
+  document.querySelectorAll("[data-ui-lang]").forEach((b) => {
+    b.classList.toggle("is-active", b.dataset.uiLang === active);
+  });
+}
+async function onUiLanguageClick(e) {
+  const btn = e.target.closest("[data-ui-lang]");
+  if (!btn) return;
+  const newLang = btn.dataset.uiLang;
+  state.uiLanguage = newLang;
+  await loadManualMessages(newLang === "auto" ? null : newLang);
+  applyStaticI18n();
+  // Re-populate dynamic content with new locale
+  populateLanguages();
+  repopulateVoices(tierSelect.value, tierSelect.value === "standard" ? state.standardVoice : state.realtimeVoice);
+  langSelect.value = state.targetLanguage || "vi";
+  applyState(state);  // re-render status text with new locale
+  applyUiLanguageButtons(newLang);
+  // Persist via background so content script also picks it up
+  chrome.runtime.sendMessage({
+    type: "UPDATE_SETTINGS",
+    settings: { uiLanguage: newLang },
+  }).catch(() => {});
+}
+document.querySelectorAll("[data-ui-lang]").forEach((b) =>
+  b.addEventListener("click", onUiLanguageClick));
+
 // Init
-populateLanguages();
-repopulateVoices(state.tier, state.tier === "standard" ? state.standardVoice : state.realtimeVoice);
 (async () => {
+  // Load uiLanguage preference BEFORE rendering any text so first paint
+  // shows the user's chosen locale instead of flashing Chrome's default.
+  let stored = {};
+  try { stored = await chrome.storage.local.get({ uiLanguage: "auto" }); } catch {}
+  const initialLang = stored.uiLanguage || "auto";
+  await loadManualMessages(initialLang === "auto" ? null : initialLang);
+  applyStaticI18n();
+  populateLanguages();
+  repopulateVoices(state.tier, state.tier === "standard" ? state.standardVoice : state.realtimeVoice);
+  applyUiLanguageButtons(initialLang);
+
   try {
     const reply = await send({ type: "GET_STATE" });
-    if (reply?.state) applyState(reply.state);
+    if (reply?.state) {
+      applyState(reply.state);
+      // Honor stored uiLanguage from background settings (overrides local fetch)
+      if (reply.state.uiLanguage && reply.state.uiLanguage !== initialLang) {
+        await loadManualMessages(reply.state.uiLanguage === "auto" ? null : reply.state.uiLanguage);
+        applyStaticI18n();
+        populateLanguages();
+        repopulateVoices(tierSelect.value, tierSelect.value === "standard" ? state.standardVoice : state.realtimeVoice);
+        applyState(reply.state);
+        applyUiLanguageButtons(reply.state.uiLanguage);
+      }
+    }
   } catch (err) {
     if (!isBenign(err.message)) {
       statusEl.textContent = err.message;

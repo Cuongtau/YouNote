@@ -1,4 +1,4 @@
-# Echoly — Chrome Web Store submission metadata
+# YouNote — Chrome Web Store submission metadata
 
 Drop these strings into the Web Store form fields exactly. Lengths checked against current limits (description 16,000; short description 132).
 
@@ -7,7 +7,7 @@ Drop these strings into the Web Store form fields exactly. Lengths checked again
 ## Name (50 char max)
 
 ```
-Echoly — Live YouTube Translation
+YouNote — Live YouTube Translation
 ```
 
 ## Short description (132 char max)
@@ -29,9 +29,9 @@ Hear any YouTube video in your language. Live AI dubbing — pick voice + langua
 ## Long description (16,000 char max — using ~1,400)
 
 ```
-Echoly turns any YouTube video into a live dub in the language you understand best. Click the icon, pick a voice and a target language, press Start. The translated voice plays back over the video with sub-second lag in Realtime mode, ~5 seconds in Standard mode.
+YouNote turns any YouTube video into a live dub in the language you understand best. Click the icon, pick a voice and a target language, press Start. The translated voice plays back over the video with sub-second lag in Realtime mode, ~5 seconds in Standard mode.
 
-Why Echoly is different
+Why YouNote is different
 • No account, no signup. You bring a Kyma API key (kymaapi.com) and the extension runs on your own balance.
 • Two tiers — pick what fits the moment.
    - Realtime · sub-second lag · clones the speaker's voice or picks from 9 OpenAI voices · ~$0.46 per 10 minutes.
@@ -54,8 +54,8 @@ How it works
 Standard tier sends short audio chunks to Kyma, which routes through Whisper for transcription, Gemini for translation, and MiniMax for the voice. Realtime tier opens a peer-to-peer WebRTC connection to OpenAI Realtime via a Kyma-minted ephemeral token — your audio never round-trips through any other server.
 
 What it doesn't do
-• No account creation. No telemetry. No analytics. No data stored on Echoly's side — see our privacy policy.
-• Not a download tool. Echoly does not save audio, transcripts, or videos to your disk.
+• No account creation. No telemetry. No analytics. No data stored on YouNote's side — see our privacy policy.
+• Not a download tool. YouNote does not save audio, transcripts, or videos to your disk.
 
 Get a Kyma key at kymaapi.com. Free starter credit on signup; pay-as-you-go after that.
 ```
@@ -65,14 +65,14 @@ Get a Kyma key at kymaapi.com. Free starter credit on signup; pay-as-you-go afte
 ## Single purpose statement (mandatory)
 
 ```
-Echoly translates the audio of the YouTube video on the active tab into a language the user picks, and plays the translation back as a live voice-over. That is its sole purpose.
+YouNote translates the audio of the YouTube video on the active tab into a language the user picks, and plays the translation back as a live voice-over. That is its sole purpose.
 ```
 
 ## Permission justifications (each ≤ 1,000 char; reviewers read these closely)
 
 ### `activeTab`
 ```
-Used so that when the user clicks the Echoly toolbar icon and presses Start, the extension can run a content script on the YouTube tab they are looking at. We do not act on tabs the user has not explicitly invoked us on.
+Used so that when the user clicks the YouNote toolbar icon and presses Start, the extension can run a content script on the YouTube tab they are looking at. We do not act on tabs the user has not explicitly invoked us on.
 ```
 
 ### `scripting`
@@ -92,7 +92,7 @@ Required to capture the audio of the YouTube video the user is watching via HTML
 
 ### `host_permissions: https://api.kymaapi.com/*`
 ```
-Required to send the captured audio to the Kyma API gateway for transcription, translation, and text-to-speech. The user's Kyma API key authenticates each request. Kyma is the user's own paid account; the extension does not proxy through any Echoly-operated server.
+Required to send the captured audio to the Kyma API gateway for transcription, translation, and text-to-speech. The user's Kyma API key authenticates each request. Kyma is the user's own paid account; the extension does not proxy through any YouNote-operated server.
 ```
 
 ### `host_permissions: https://api.openai.com/*`
@@ -138,12 +138,12 @@ Once hosted, paste the URL into the Web Store form's "Privacy policy" field.
 ## Test instructions for reviewer (under "Account" tab in the form)
 
 ```
-Echoly requires a Kyma API key to function. To test:
+YouNote requires a Kyma API key to function. To test:
 
 1. Sign up for a free account at https://kymaapi.com (free starter credit included).
 2. Copy the API key from the dashboard.
 3. Open any English-language YouTube video.
-4. Click the Echoly icon, paste the key, leave defaults (Realtime tier, Vietnamese, Marin voice).
+4. Click the YouNote icon, paste the key, leave defaults (Realtime tier, Vietnamese, Marin voice).
 5. Press Start. Within ~2 seconds the dub should begin.
 
 If you'd prefer a pre-loaded test key, please email sonxpiaz@gmail.com and I'll provide one for the duration of the review.

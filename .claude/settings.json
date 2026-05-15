@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check content.js)",
+      "Bash(node --check background.js)",
+      "Bash(node --check popup.js)",
+      "Bash(python -c \"import json; json.load\\(open\\('manifest.json'\\)\\); json.load\\(open\\('_locales/vi/messages.json'\\)\\); json.load\\(open\\('_locales/en/messages.json'\\)\\)\")",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('_locales/vi/messages.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('_locales/en/messages.json','utf8'\\)\\); console.log\\('JSON OK'\\)\")",
+      "Bash(node -e \"['_locales/vi/messages.json','_locales/en/messages.json','manifest.json'].forEach\\(f=>JSON.parse\\(require\\('fs'\\).readFileSync\\(f,'utf8'\\)\\)\\); console.log\\('JSON OK'\\)\")",
+      "Bash(python \"C:/Users/ASUS/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"translation overlay panel browser extension dark glass productivity\" --design-system -p \"YouNote\")",
+      "Bash(PYTHONIOENCODING=utf-8 python \"C:/Users/ASUS/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"translation overlay panel browser extension dark glass productivity\" --design-system -p \"YouNote\" -f markdown)",
+      "Bash(PYTHONIOENCODING=utf-8 python \"C:/Users/ASUS/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"split panel two column sidebar layout\" --domain ux -n 8)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('manifest.json','utf8'\\)\\)\")",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(node --check dist/content.js)",
+      "Bash(node --check dist/popup.js)",
+      "Bash(node --check dist/background.js)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('dist/manifest.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('dist/_locales/vi/messages.json','utf8'\\)\\);\")",
+      "Bash(node -e \"console.log\\(require\\('fs'\\).readFileSync\\('dist/content.js','utf8'\\).slice\\(0, 200\\)\\)\")"
+    ]
+  }
+}

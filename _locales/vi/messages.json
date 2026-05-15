@@ -1,0 +1,459 @@
+{
+  "appName": {
+    "message": "YouNote — Dịch trực tiếp YouTube"
+  },
+  "appShortName": {
+    "message": "YouNote"
+  },
+  "appDescription": {
+    "message": "Nghe YouTube bằng tiếng Việt. Lồng tiếng AI trực tiếp, chọn giọng và ngôn ngữ, dùng key Kyma của bạn."
+  },
+  "actionTitle": {
+    "message": "YouNote"
+  },
+  "eyebrow": {
+    "message": "Trợ lý dịch trực tiếp"
+  },
+  "tierLabel": {
+    "message": "Chế độ"
+  },
+  "tierStandard": {
+    "message": "Tiêu chuẩn · trễ ~5s · rẻ hơn"
+  },
+  "tierRealtime": {
+    "message": "Thời gian thực · clone giọng · <1s"
+  },
+  "voiceLabel": {
+    "message": "Giọng"
+  },
+  "languageLabel": {
+    "message": "Ngôn ngữ"
+  },
+  "keyLabel": {
+    "message": "Key Admin"
+  },
+  "keyPlaceholder": {
+    "message": "ky-..."
+  },
+  "keyMissing": {
+    "message": "chưa có"
+  },
+  "keySaved": {
+    "message": "đã lưu"
+  },
+  "keyCheck": {
+    "message": "kiểm tra"
+  },
+  "btnStart": {
+    "message": "Bắt đầu"
+  },
+  "btnStop": {
+    "message": "Dừng"
+  },
+  "btnHide": {
+    "message": "Ẩn"
+  },
+  "btnShow": {
+    "message": "Hiện"
+  },
+  "btnDownload": {
+    "message": "Tải"
+  },
+  "btnDownloadFull": {
+    "message": "Tải bản dịch"
+  },
+  "btnHistory": {
+    "message": "Lịch sử"
+  },
+  "btnHistoryFull": {
+    "message": "Xem các lần đã dịch"
+  },
+  "btnClearHistory": {
+    "message": "Xoá hết"
+  },
+  "btnClose": {
+    "message": "Đóng"
+  },
+  "btnCopy": {
+    "message": "Sao chép"
+  },
+  "btnDeleteEntry": {
+    "message": "Xoá lượt này"
+  },
+  "historyTitle": {
+    "message": "Lịch sử dịch"
+  },
+  "originalLabel": {
+    "message": "Gốc"
+  },
+  "voiceVolLabel": {
+    "message": "Lồng tiếng"
+  },
+  "showSource": {
+    "message": "Hiện phụ đề gốc"
+  },
+  "advanced": {
+    "message": "Nâng cao"
+  },
+  "pricingNote": {
+    "message": "Giá: Thời gian thực ~$0.46/10 phút · Tiêu chuẩn ~$0.25/10 phút. Trừ từ số dư Kyma của bạn."
+  },
+  "manageAccount": {
+    "message": "Quản lý tài khoản:"
+  },
+  "billingLink": {
+    "message": "thanh toán"
+  },
+  "dashboardLink": {
+    "message": "lịch sử phiên"
+  },
+  "autoStopHint": {
+    "message": "Phiên tự dừng sau 60 phút. Bấm Dừng để kết thúc sớm."
+  },
+  "statusReady": {
+    "message": "Sẵn sàng."
+  },
+  "statusReadyNoKey": {
+    "message": "Thêm khóa Kyma để bắt đầu."
+  },
+  "statusConnecting": {
+    "message": "Đang kết nối"
+  },
+  "statusTranslating": {
+    "message": "Đang dịch"
+  },
+  "statusTranslatingTo": {
+    "message": "Đang dịch sang $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPaused": {
+    "message": "Tạm dừng."
+  },
+  "statusStopped": {
+    "message": "Đã dừng"
+  },
+  "statusAcquiringAudio": {
+    "message": "Đang lấy âm thanh"
+  },
+  "statusSwitchVoice": {
+    "message": "Đang đổi giọng"
+  },
+  "statusSwitchLang": {
+    "message": "Đang chuyển sang $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusError": {
+    "message": "Lỗi dịch"
+  },
+  "statusPipelineError": {
+    "message": "Lỗi pipeline"
+  },
+  "errAddKey": {
+    "message": "Thêm khóa Kyma trước."
+  },
+  "errCannotStart": {
+    "message": "Không thể bắt đầu."
+  },
+  "errOpenYT": {
+    "message": "Mở video YouTube trước."
+  },
+  "errNoActiveTab": {
+    "message": "Không có tab đang mở."
+  },
+  "errNoVideo": {
+    "message": "Không tìm thấy video YouTube trên trang này."
+  },
+  "errAudioNotReady": {
+    "message": "Audio YouTube chưa sẵn sàng. Bấm play rồi Bắt đầu lại."
+  },
+  "errCannotCapture": {
+    "message": "Phiên bản Chrome này không capture được audio YouTube."
+  },
+  "errBrowserNoRecord": {
+    "message": "Trình duyệt không hỗ trợ ghi audio cho pipeline chunked."
+  },
+  "errNetwork": {
+    "message": "Lỗi mạng tới Kyma."
+  },
+  "errMintNoSecret": {
+    "message": "Phản hồi Kyma thiếu client_secret."
+  },
+  "errOutOfBalance": {
+    "message": "Hết số dư Kyma."
+  },
+  "errTooManySessions": {
+    "message": "Đã có 3 phiên đang chạy. Dừng 1 phiên hoặc chờ."
+  },
+  "errUpstream": {
+    "message": "Provider không truy cập được. Thử lại sau ít phút."
+  },
+  "errRateLimited": {
+    "message": "Provider chặn rate. Chờ 30s."
+  },
+  "errKymaPrefix": {
+    "message": "Kyma $STATUS$: $MSG$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      },
+      "msg": {
+        "content": "$2"
+      }
+    }
+  },
+  "errSdpExchange": {
+    "message": "Trao đổi SDP $STATUS$: $MSG$",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      },
+      "msg": {
+        "content": "$2"
+      }
+    }
+  },
+  "errSwitchFailed": {
+    "message": "Đổi thất bại — giữ phiên hiện tại"
+  },
+  "errStaleSession": {
+    "message": "Phiên đã cũ."
+  },
+  "errSessionRunning": {
+    "message": "Đã có phiên đang chạy."
+  },
+  "errCancelledBeforeConnect": {
+    "message": "Đã huỷ trước khi kết nối xong."
+  },
+  "errAudioContext": {
+    "message": "AudioContext không khả dụng: $MSG$",
+    "placeholders": {
+      "msg": {
+        "content": "$1"
+      }
+    }
+  },
+  "errUnknownTier": {
+    "message": "Chế độ không nhận diện: $TIER$",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      }
+    }
+  },
+  "errUnknownMessage": {
+    "message": "Thông điệp không nhận diện: $TYPE$",
+    "placeholders": {
+      "type": {
+        "content": "$1"
+      }
+    }
+  },
+  "topUp": {
+    "message": "Nạp tiền"
+  },
+  "tierLockToast": {
+    "message": "Bấm Dừng rồi Bắt đầu lại để đổi chế độ"
+  },
+  "sessionEndingSoon": {
+    "message": "Phiên sẽ kết thúc sau 5 phút"
+  },
+  "sessionAutoStopped": {
+    "message": "Tự dừng sau 60 phút — bắt đầu lại để tiếp tục."
+  },
+  "ytNavigated": {
+    "message": "YouTube đã chuyển trang."
+  },
+  "connectionLost": {
+    "message": "Mất kết nối."
+  },
+  "voiceAuto": {
+    "message": "Tự động · clone giọng"
+  },
+  "liveLabel": {
+    "message": "Đang nghe"
+  },
+  "colSourceLabel": {
+    "message": "Gốc"
+  },
+  "colTargetLabel": {
+    "message": "Dịch"
+  },
+  "statusAdPlaying": {
+    "message": "Đang quảng cáo — tạm dừng"
+  },
+  "statusVideoEnded": {
+    "message": "Hết video — chờ video kế tiếp"
+  },
+  "autoRestarted": {
+    "message": "Đã chuyển sang video mới"
+  },
+  "compareEmpty": {
+    "message": "Chưa có bản dịch nào. Bắt đầu phát video để dịch."
+  },
+  "uiLanguageLabel": {
+    "message": "Giao diện"
+  },
+  "uiLanguageAuto": {
+    "message": "Tự động"
+  },
+  "btnMinimize": {
+    "message": "Thu nhỏ"
+  },
+  "btnMinimizeFull": {
+    "message": "Thu nhỏ thành nút nhỏ"
+  },
+  "btnRestore": {
+    "message": "Mở lại"
+  },
+  "btnRestoreFull": {
+    "message": "Mở lại bảng dịch YouNote"
+  },
+  "btnSidebarToggle": {
+    "message": "Cột phải"
+  },
+  "downloadEmpty": {
+    "message": "Chưa có bản dịch nào để tải."
+  },
+  "downloadDone": {
+    "message": "Đã tải về $COUNT$ lượt dịch.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadHeader": {
+    "message": "YouNote — Bản ghi dịch và thuyết minh"
+  },
+  "downloadVideoLine": {
+    "message": "Video: $URL$",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadGeneratedAt": {
+    "message": "Tạo lúc: $TIME$",
+    "placeholders": {
+      "time": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadCount": {
+    "message": "Số lượt: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "downloadSourceLabel": {
+    "message": "Gốc"
+  },
+  "downloadTargetLabel": {
+    "message": "Dịch"
+  },
+  "historyCleared": {
+    "message": "Đã xoá lịch sử."
+  },
+  "historyEmpty": {
+    "message": "Chưa có lịch sử dịch."
+  },
+  "attribution": {
+    "message": "Phát triển bởi cuongbx · VCI"
+  },
+  "productInfo": {
+    "message": "YouNote là sản phẩm của VCI — đội ngũ phát triển công cụ AI và productivity bởi cuongbx."
+  },
+  "voiceMarinName": {
+    "message": "Marin"
+  },
+  "voiceAlloyName": {
+    "message": "Alloy"
+  },
+  "voiceAshName": {
+    "message": "Ash"
+  },
+  "voiceBalladName": {
+    "message": "Ballad"
+  },
+  "voiceCoralName": {
+    "message": "Coral"
+  },
+  "voiceEchoName": {
+    "message": "Echo"
+  },
+  "voiceSageName": {
+    "message": "Sage"
+  },
+  "voiceShimmerName": {
+    "message": "Shimmer"
+  },
+  "voiceVerseName": {
+    "message": "Verse"
+  },
+  "voiceMagneticMan": {
+    "message": "Giọng Nam Cuốn Hút"
+  },
+  "voiceCaptivatingFemale": {
+    "message": "Giọng Nữ Truyền Cảm"
+  },
+  "voiceDeepVoiceMan": {
+    "message": "Giọng Nam Trầm"
+  },
+  "voiceConfidentWoman": {
+    "message": "Giọng Nữ Tự Tin"
+  },
+  "voiceNewsAnchor": {
+    "message": "Phát Thanh Viên"
+  },
+  "langEn": {
+    "message": "Tiếng Anh"
+  },
+  "langVi": {
+    "message": "Tiếng Việt"
+  },
+  "langJa": {
+    "message": "Tiếng Nhật"
+  },
+  "langKo": {
+    "message": "Tiếng Hàn"
+  },
+  "langZh": {
+    "message": "Tiếng Trung"
+  },
+  "langFr": {
+    "message": "Tiếng Pháp"
+  },
+  "langEs": {
+    "message": "Tiếng Tây Ban Nha"
+  },
+  "langDe": {
+    "message": "Tiếng Đức"
+  },
+  "langPt": {
+    "message": "Tiếng Bồ Đào Nha"
+  },
+  "langHi": {
+    "message": "Tiếng Hindi"
+  },
+  "langId": {
+    "message": "Tiếng Indonesia"
+  },
+  "langIt": {
+    "message": "Tiếng Ý"
+  },
+  "langRu": {
+    "message": "Tiếng Nga"
+  }
+}

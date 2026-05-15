@@ -1,0 +1,16 @@
+{
+  "name": "younote",
+  "version": "0.4.3",
+  "private": true,
+  "description": "YouNote — Live YouTube Translation. Build pipeline for obfuscated distribution.",
+  "scripts": {
+    "build": "node build.js",
+    "pack": "node build.js && node pack.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "terser": "^5.36.0",
+    "javascript-obfuscator": "^4.1.1",
+    "archiver": "^7.0.1"
+  }
+}

@@ -37,12 +37,12 @@ const m = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
 m.version = '$NEW';
 fs.writeFileSync('manifest.json', JSON.stringify(m, null, 2) + '\n');
 let c = fs.readFileSync('content.js', 'utf8');
-c = c.replace(/const ECHOLY_VERSION = \"[^\"]+\";/, 'const ECHOLY_VERSION = \"$NEW\";');
+c = c.replace(/const YOUNOTE_VERSION = \"[^\"]+\";/, 'const YOUNOTE_VERSION = \"$NEW\";');
 fs.writeFileSync('content.js', c);
 "
 
-# Pack the zip
-./pack.sh
+# Build obfuscated dist/ + pack the zip
+npm run pack
 
 # Show the diff and ask for confirmation before pushing
 echo
@@ -58,10 +58,10 @@ git push
 git push --tags
 
 # Optional release notes — paste from CHANGELOG.md or write inline
-ZIP="$HOME/echoly-v${NEW}.zip"
+ZIP="$HOME/younote-v${NEW}.zip"
 gh release create "v$NEW" "$ZIP" \
   --title "v$NEW" \
-  --notes "Install via developer mode: download \`echoly-v${NEW}.zip\`, unzip, drag into chrome://extensions with Developer mode on. Web Store update propagates automatically once Chrome approves."
+  --notes "Install via developer mode: download \`younote-v${NEW}.zip\`, unzip, drag into chrome://extensions with Developer mode on. Web Store update propagates automatically once Chrome approves."
 
 echo
 echo "✓ Released v$NEW"
@@ -70,7 +70,7 @@ echo "  GitHub: https://github.com/sonpiaz/echoly/releases/tag/v$NEW"
 echo
 echo "Next manual step (Web Store auto-update):"
 echo "  1. https://chrome.google.com/webstore/devconsole"
-echo "  2. Pick the Echoly item"
+echo "  2. Pick the YouNote item"
 echo "  3. Drag $ZIP into the package upload area"
 echo "  4. Add a one-line changelog and Submit for review"
 echo "  5. Auto-rolls out to users 1-3 days after Chrome approves"

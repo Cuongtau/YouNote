@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Echoly — Live YouTube Translation",
-  "short_name": "Echoly",
-  "description": "Hear any YouTube video in your language. Live AI dubbing, picks voice + language, runs on your Kyma key.",
-  "version": "0.2.1",
+  "default_locale": "vi",
+  "name": "__MSG_appName__",
+  "short_name": "__MSG_appShortName__",
+  "description": "__MSG_appDescription__",
+  "version": "0.4.3",
   "minimum_chrome_version": "116",
   "permissions": ["activeTab", "scripting", "storage"],
   "content_security_policy": {
@@ -23,7 +24,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Echoly",
+    "default_title": "__MSG_actionTitle__",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
