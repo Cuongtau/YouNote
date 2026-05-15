@@ -4,7 +4,7 @@
   "name": "__MSG_appName__",
   "short_name": "__MSG_appShortName__",
   "description": "__MSG_appDescription__",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "minimum_chrome_version": "116",
   "permissions": ["activeTab", "scripting", "storage"],
   "content_security_policy": {

@@ -11,7 +11,7 @@
 
 (() => {
   // ───── F9 — Idempotent version guard ──────────────────────────────────────
-  const YOUNOTE_VERSION = "0.4.3";
+  const YOUNOTE_VERSION = "0.4.4";
   const GLOBAL_KEY = "__younoteContentVersion";
   if (window[GLOBAL_KEY] === YOUNOTE_VERSION) return;
   // Older copy may have left UI behind (also covers Echoly-era v0.2.x).
@@ -1216,7 +1216,14 @@
         body: JSON.stringify({
           session: {
             model: "gpt-realtime-translate",
-            audio: { output: { language: lang, ...(voice ? { voice } : {}) } },
+            audio: {
+              // Enable input-side transcription so OpenAI streams the SOURCE
+              // text back via session.input_transcript.* events. Without this,
+              // the source column stays empty for videos that don't have YT
+              // captions enabled (which is most of them).
+              input: { transcription: { model: "whisper-1" } },
+              output: { language: lang, ...(voice ? { voice } : {}) },
+            },
           },
         }),
       });
@@ -1337,27 +1344,65 @@
 
   function handleRealtimeEvent(raw, token) {
     if (token !== pageToken && session?.token !== token) return;
+    if (!session) return;  // session torn down between event arrival and this tick
     let evt;
     try { evt = JSON.parse(raw); } catch { return; }
     if (evt.type === "error") {
       setStatusText(t("statusError"));
       return;
     }
+
+    // Lazily create the per-turn pair the FIRST time any delta (input or
+    // output) arrives. Both source and target deltas may interleave — we
+    // need a single shared pair element so the row stays aligned.
+    function ensurePair() {
+      if (!session.currentPair) {
+        session.currentPair = createPendingPair();
+        session.currentTurnSource = "";
+        session.currentTurnTarget = "";
+        session.currentTurnStartTs = Date.now();
+      }
+    }
+
+    // ── INPUT (source language) transcript stream ────────────────────────
+    // Enabled by `input: { transcription: { model: "whisper-1" } }` in mint.
+    // OpenAI emits these for the audio WE send → that's the original source.
+    const isInputDelta =
+      evt.type === "session.input_transcript.delta" ||
+      evt.type === "conversation.item.input_audio_transcription.delta";
+    if (isInputDelta && evt.delta) {
+      ensurePair();
+      session.currentTurnSource += evt.delta;
+      setPairSource(session.currentPair, session.currentTurnSource);
+      setOverlayState("live");
+      return;
+    }
+    const isInputDone =
+      evt.type === "session.input_transcript.done" ||
+      evt.type === "session.input_transcript.completed" ||
+      evt.type === "conversation.item.input_audio_transcription.completed";
+    if (isInputDone) {
+      ensurePair();
+      const finalSrc = evt.transcript || session.currentTurnSource || "";
+      session.currentTurnSource = finalSrc;
+      setPairSource(session.currentPair, finalSrc);
+      // Don't commit here — wait for OUTPUT done so audio playback aligns.
+      return;
+    }
+
+    // ── OUTPUT (translated) transcript stream ────────────────────────────
     const isDelta =
       evt.type === "session.output_transcript.delta" ||
       evt.type === "response.audio_transcript.delta" ||
       evt.type === "response.output_audio_transcript.delta" ||
       (evt.type === "response.text.delta" && typeof evt.delta === "string");
     if (isDelta && evt.delta) {
-      // First delta of a new transcript turn → spin up a fresh pair owned
-      // by this session. Source is snapshotted from the LIVE caption (best
-      // effort — Realtime API doesn't expose source transcript separately).
-      if (!session.currentPair) {
-        session.currentPair = createPendingPair();
-        session.currentTurnSource = currentSourceText || "";
-        session.currentTurnTarget = "";
-        session.currentTurnStartTs = Date.now();
-        if (session.currentPair) setPairSource(session.currentPair, session.currentTurnSource);
+      ensurePair();
+      // Fallback: if no input transcript came in (e.g. mint config rejected
+      // input transcription), seed source from latest YT caption snapshot.
+      if (!session.currentTurnSource && currentSourceText) {
+        session.currentTurnSource = currentSourceText;
+        setPairSource(session.currentPair, session.currentTurnSource);
       }
       session.currentTurnTarget += evt.delta;
       setPairTarget(session.currentPair, session.currentTurnTarget, session.targetLanguage);
@@ -1374,7 +1419,6 @@
       const finalTarget = evt.transcript || session.currentTurnTarget || "";
       const finalSource = session.currentTurnSource || currentSourceText || "";
       const ts = session.currentTurnStartTs || Date.now();
-      // Snap final values into DOM in case delta lost packets, then commit.
       setPairTarget(session.currentPair, finalTarget, session.targetLanguage);
       setPairSource(session.currentPair, finalSource);
       commitPair(session.currentPair, new Date(ts).toTimeString().slice(0, 5));
