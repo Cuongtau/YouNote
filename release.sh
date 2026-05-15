@@ -66,7 +66,7 @@ gh release create "v$NEW" "$ZIP" \
 echo
 echo "✓ Released v$NEW"
 echo "  Zip:    $ZIP"
-echo "  GitHub: https://github.com/sonpiaz/echoly/releases/tag/v$NEW"
+echo "  GitHub: https://github.com/Cuongtau/YouNote/releases/tag/v$NEW"
 echo
 echo "Next manual step (Web Store auto-update):"
 echo "  1. https://chrome.google.com/webstore/devconsole"

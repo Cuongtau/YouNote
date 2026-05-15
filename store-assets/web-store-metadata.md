@@ -131,7 +131,7 @@ Required certifications:
 
 ## Privacy policy URL
 
-Host `store-assets/privacy-policy.html` somewhere stable. Suggested: `https://sonpiaz.com/echoly/privacy` or a static Vercel project.
+Host `store-assets/privacy-policy.html` somewhere stable. Suggested: `https://cuongtau.github.io/YouNote/privacy` or a static Vercel project.
 
 Once hosted, paste the URL into the Web Store form's "Privacy policy" field.
 
