@@ -17,7 +17,11 @@
       "Bash(node --check dist/popup.js)",
       "Bash(node --check dist/background.js)",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('dist/manifest.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('dist/_locales/vi/messages.json','utf8'\\)\\);\")",
-      "Bash(node -e \"console.log\\(require\\('fs'\\).readFileSync\\('dist/content.js','utf8'\\).slice\\(0, 200\\)\\)\")"
+      "Bash(node -e \"console.log\\(require\\('fs'\\).readFileSync\\('dist/content.js','utf8'\\).slice\\(0, 200\\)\\)\")",
+      "Bash(git config *)",
+      "Bash(git remote *)",
+      "Bash(git ls-remote *)",
+      "Bash(git push *)"
     ]
   }
 }
