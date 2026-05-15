@@ -21,7 +21,9 @@
       "Bash(git config *)",
       "Bash(git remote *)",
       "Bash(git ls-remote *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
